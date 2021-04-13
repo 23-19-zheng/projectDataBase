@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员登录界面</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .el-header,
+        .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body>.el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            width: 200px;
+            min-height: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="divId">
+        </el-dialog>
+        <el-dialog title="修改新闻" :visible.sync="updateDialogVisible" width="50%" :before-close="handleClose">
+            <span>
+                <el-form :inline="true">
+                    <el-form-item label="新闻的序号">
+                        <el-input v-model="medicalNews.id" placeholder="序号"></el-input>
+                    </el-form-item>
+                    <el-form-item label="新闻的标题">
+                        <el-input v-model="medicalNews.title" placeholder="标题"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="新闻审批人">
+                        <el-input v-model="medicalNews.author" placeholder="审批人"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="新闻的内容">
+                        <el-input type="textarea" placeholder="内容" v-model="medicalNews.content"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="发布的时间">
+                        <el-col>
+                            <el-date-picker type="date" placeholder="选择日期" v-model="medicalNews.date"
+                                style="width: 100%;">
+                            </el-date-picker>
+                        </el-col>
+                    </el-form-item>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="updateDialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="updateMedicalNews();updateDialogVisible= false">修改</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog title="删除新闻" :visible.sync="deleteDialogVisible" width="50%" :before-close="handleClose">
+            <span>
+                <el-form :inline="true">
+                    <el-form-item>
+                        <el-input v-model="medicalNews.title" placeholder="请输入想要删除的新闻标题"></el-input>
+                    </el-form-item>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="deleteDialogVisible = false">重置</el-button>
+                <el-button type="primary" @click="deleteMedicalNews();deleteDialogVisible= false">删除</el-button>
+            </span>
+        </el-dialog>
+
+        <el-dialog title="发布新闻" :visible.sync="dialogVisible" width="50%" :before-close="handleClose">
+            <span>
+                <el-form :inline="true">
+                    <el-form-item label="新闻的标题">
+                        <el-input v-model="medicalNews.title" placeholder="标题"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="新闻审批人">
+                        <el-input v-model="medicalNews.author" placeholder="审批人"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="新闻的内容">
+                        <el-input type="textarea" placeholder="内容" v-model="medicalNews.content"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="发布的时间">
+                        <el-col>
+                            <el-date-picker type="date" placeholder="选择日期" v-model="medicalNews.date"
+                                style="width: 100%;">
+                            </el-date-picker>
+                        </el-col>
+                    </el-form-item>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="dialogVisible = false">取 消</el-button>
+                <el-button type="primary" @click="addMedicalNews();dialogVisible= false">发 布</el-button>
+            </span>
+        </el-dialog>
+        <el-container>
+            <el-header>
+                </el-menu>
+                <div class="line"></div>
+                <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" @select="handleSelect"
+                    background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                    <el-menu-item index="1">处理中心</el-menu-item>
+                    <el-submenu index="2">
+                        <template slot="title">我的工作台</template>
+                        <el-menu-item index="2-1" @click="dialogVisible = true">发布新闻</el-menu-item>
+
+                        <el-menu-item index="2-2" @click="deleteDialogVisible = true">删除新闻
+                        </el-menu-item>
+                        <el-menu-item index="2-3" @click="updateDialogVisible = true">修改新闻
+                        </el-menu-item>
+                        <el-submenu index="2-4">
+                            <template slot="title">查询新闻</template>
+                            <el-menu-item index="2-4-1">
+                                <a href="findMedicalByIdNews.html" target="_blank">序号查询</a>
+                            </el-menu-item>
+                            <el-menu-item index="2-4-3">
+                            <a href="findMedicalByTitleNews.html" target="_blank">标题查询</a>
+                            </el-menu-item>
+                            <el-menu-item index="2-4-2">
+                            <a href="findMedicalByAuthorNews.html" target="_blank">发布者查询</a>
+                            </el-menu-item>
+                            <el-menu-item index="2-4-3">
+                            <a href="findMedicalByDateNews.html" target="_blank">发布时间查询</a>
+                            </el-menu-item>
+                        </el-submenu>
+                    </el-submenu>
+                    <el-menu-item index="3">消息中心</el-menu-item>
+                    <el-menu-item index="4"><a href="https://www.ele.me" target="_blank">顾客管理</a></el-menu-item>
+                </el-menu>
+            </el-header>
+            <el-container>
+                <el-aside width="200px">
+                    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
+                        <el-row class="tac">
+                            <el-col :span="12">
+                                <h5>默认颜色</h5>
+                                <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen"
+                                    @close="handleClose">
+
+                                    <el-menu-item index="2">
+                                        <i class="el-icon-document"></i>
+                                        <span slot="title">日常业务</span>
+                                    </el-menu-item>
+                                    <el-menu-item index="2">
+                                        <i class="el-icon-document"></i>
+                                        <span slot="title">账单管理</span>
+                                    </el-menu-item>
+                                    <el-menu-item index="2">
+                                        <i class="el-icon-document"></i>
+                                        <span slot="title">查询统计</span>
+                                    </el-menu-item>
+                                    <el-menu-item index="2">
+                                        <i class="el-icon-document"></i>
+                                        <span slot="title">工作人员</span>
+                                    </el-menu-item>
+
+                                    <el-menu-item index="4">
+                                        <i class="el-icon-setting"></i>
+                                        <span slot="title">数据维护</span>
+                                    </el-menu-item>
+                                </el-menu>
+                            </el-col>
+
+                        </el-row>
+                </el-aside>
+                <el-container>
+                    <el-main>
+                        main
+                    </el-main>
+                    <el-footer>Footer</el-footer>
+                </el-container>
+            </el-container>
+        </el-container>
+    </div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#divId',
+        data: function () {
+            return {
+                dialogVisible: false,
+                deleteDialogVisible: false,
+                updateDialogVisible: false,
+                isCollapse: true,
+                activeIndex: '1',
+                activeIndex2: '1',
+                medicalNews: {
+                    id: '',
+                    title: '',
+                    author: '',
+                    content: '',
+                    date: ''
+                }
+            }
+        },
+        methods: {
+
+            //发布新闻
+            addMedicalNews: function () {
+                var _this = this;
+                axios({
+                    method: 'get',
+                    url: 'http://localhost:8888/addMedicalNews.action',
+                    params: {
+                        title: _this.medicalNews.title,
+                        author: _this.medicalNews.author,
+                        content: _this.medicalNews.content,
+                        date: _this.medicalNews.date
+                    }
+                })
+                    .then(function (response) {
+                        console.log(response);
+                        if (response.data.code == 200) {
+                            alert(response.data.msg)
+
+                        } else {
+                            _this.$message({
+                                message: response.data.msg,
+                                type: 'error'
+                            });
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                this.dialogFormVisible = false;
+
+            },
+            //删除新闻
+            deleteMedicalNews: function () {
+                var _this = this;
+                axios.delete('http://localhost:8888/deleteMedicalNews.action?title=' + _this.medicalNews.title)
+                    .then(function (response) {
+                        console.log(response);
+                        if (response.data.code == 200) {
+                            alert(response.data.msg)
+                        }
+                        else {
+                            _this.$message({
+                                message: response.data.msg,
+                                type: 'error'
+                            })
+                        }
+
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            },
+            //修改新闻
+            updateMedicalNews: function () {
+                var _this = this;
+                axios.post('http://localhost:8888/updateMedicalNews.action', _this.medicalNews)
+                    .then(function (response) {
+                        console.log(response);
+                        if (response.data.code == 200) {
+                            alert(response.data.msg)
+                        }
+                        else {
+                            _this.$message({
+                                message: response.data.msg,
+                                type: 'error'
+                            })
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+            },
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleSelect(key, keyPath) {
+                console.log(key, keyPath);
+            }
+        }
+    })
+</script>
+
+</html>

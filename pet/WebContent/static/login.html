@@ -1,0 +1,164 @@
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录界面</title>
+<style>
+.attribute {
+	margin: 20px auto 0 auto;
+	width: 350px;
+	height: 50px;
+}
+
+#id {
+	margin: 5px auto 0 auto;
+	height: 35px;
+	width: 300px;
+}
+
+#password {
+	margin: 20px auto 0 auto;
+	height: 35px;
+	width: 300px;
+}
+
+#number {
+	margin: 20px auto 0 auto;
+	height: 35px;
+	width: 300px;
+}
+
+#title {
+	margin-left: 1%;
+	font-size: 0.9em;
+	color: honeydew;
+}
+
+body {
+	background-color: rgb(39, 103, 121);
+}
+
+#DivId {
+	margin: 65px auto 0 auto;
+	background-color: rgb(39, 64, 71);
+	width: 400px;
+	height: 450px;
+}
+
+#loginDiv {
+	margin: 80px auto 0 auto;
+	height: 40px;
+	width: 200px;
+}
+
+#loginId {
+	height: 40px;
+	width: 200px;
+	font-size: 1.2em;
+	background-color: rgb(32, 125, 138);
+}
+
+a {
+	color: cornsilk;
+	text-decoration: none;
+}
+
+.select {
+	margin-top: 26px;
+	text-align: center;
+}
+
+#lebal {
+	color: honeydew;
+	font-size: 2.3em;
+	padding-top: 2px;
+	text-align: center;
+}
+</style>
+</head>
+
+<body>
+	<div id="title">
+		<h2>宠物商城管理系统</h2>
+	</div>
+
+	<div id="DivId">
+		<form action="findManager.action">
+			<div id="lebal">
+				<h4>用户登录</h4>
+			</div>
+			<div class="attribute">
+				<label>账号</label> <input type="number" placeholder="请输入您的账号"
+					v-model="user.number" id="number">
+			</div>
+			<div class="attribute">
+				<label>密码</label> <input type="password" placeholder="请输入您的密码"
+					v-model="user.password" id="password">
+			</div>
+			<div id="loginDiv">
+				<input type="button" value="登   录" @click=login() id="loginId">
+			</div>
+
+		</form>
+		<div class="select">
+			<a href="remberpassword.html">忘记密码</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="regist.html">马上注册</a>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<script>
+        var vue = new Vue({
+            el: '#DivId',
+            data: {
+            user:{
+            	number: '',
+                password: ''
+            	}               	               
+            },
+            methods: {
+                login: function () {
+                // 为给定 ID 的 user 创建请求               
+                	_this=this,
+                	axios({
+                	    method: 'get',
+                	    url: 'http://localhost:8888/api/login.action',
+                	    params:{
+                	    	number:_this.user.number,
+                	    	password:_this.user.password
+                	    }
+                	    	})
+              	.then(function(response){
+                        console.log(response);
+                        if (response.data.code == 2001) {	
+                            window.location.href = "Manager.html";
+                        }
+                        else if (response.data.code == 2002){
+                            window.location.href = "Customer.html";
+                            window.localStorage.setItem('number',_this.user.number);
+                            window.localStorage.setItem('password',_this.user.password)
+                        }
+                                             
+                        else {
+                            _this.$message({
+                                message: response.data.msg,
+                                type: 'error',
+                            });
+                            alert(message)
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+                this.dialogFormVisible = false;
+
+            }
+            }
+        })
+
+    </script>
+</body>
+
+</html>

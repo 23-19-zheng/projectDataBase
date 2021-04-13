@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+"-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="edu.xufe.ICustomerMapper">
+    <resultMap type="Customer" id="CustomerMapper">
+    <id property="id" column="customer_id"/>
+    <result property="number" column="customer_number"/>
+    <result property="pasword" column="customer_password"/>
+    <result property="name" column="customer_name"/>
+    <result property="age" column="customer_address"/>
+    <!-- 一对多联查 -->
+    <collection property="pet" column="customer_pet" resultMap="PetMapper"/>
+    </resultMap>
+    
+    <insert id="add">
+    INSERT INTO customer_tab (customer_number,customer_password,customer_name,customer_address,customer_pet)
+    VALUES (#{number},#{password},#{name},#{address},#{pet})
+    </insert>
+    
+    <delete id="delete">
+    DELETE FROME customer_tab WHERE customer_number=#{number}
+    </delete>
+    
+    <update id="update">
+    UPDATE customer_tab
+    <set>
+      <if test="number!=null">
+      customer_number=#{number}
+      </if>
+      <if test="password!=null">
+      customer_password=#{password}
+      </if>
+      <if test="name!=null">
+      customer_name=#{name}
+      </if>
+      <if test="age!=null">
+      customer_address=#{address}
+      </if> 
+      <if test="pet!=null">
+      customer_pet=#{pet}
+      </if>    
+    </set>
+    </update>
+    <sql id="QuerySql">
+    SELECT * FROM customer_tab
+    </sql>
+    <select id="findAllCustomer" resultMap="CustomerMapper">
+    <include refid="QuerySql"/> 
+    </select>
+    <select id="findByNumberCustomer" resultMap="CustomerMapper">
+    <include refid="QuerySql"/> WHERE customer_number=#{number}
+    </select>
+
+
+
+</mapper>

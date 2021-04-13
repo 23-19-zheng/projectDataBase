@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>顾客登录界面</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .el-header,
+        .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body>.el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="DivId">
+        <el-container>
+            <el-header>
+                <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" 
+                    background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                    <el-menu-item index="1">个人中心</el-menu-item>
+                    <el-menu-item index="2">修改信息</el-menu-item>                   
+                    <el-menu-item index="3"><a href="findMedicalByTitleNews.html" target="_blank">查看宠物</a></el-menu-item>
+                    <el-menu-item index="2">注销</el-menu-item>  
+                </el-menu>
+            </el-header>
+            <el-main><template>
+                    <el-table :data="Citizen" style="width: 100%">
+                        <el-table-column prop="id" label="序号">
+                        </el-table-column>
+                        
+                        <el-table-column prop="number" label="账号">
+                        </el-table-column>
+                        
+                        <el-table-column prop="password" label="密码">
+                        </el-table-column>
+                        
+                        <el-table-column prop="name" label="姓名">
+                        </el-table-column>
+                        
+                        <el-table-column prop="age" label="年龄">
+                        </el-table-column>
+                        
+                        <el-table-column prop="gender" label="性别">
+                        </el-table-column>
+                        
+                        <el-table-column prop="idcard" label="身份证号">
+                        </el-table-column>
+                        
+                        <el-table-column prop="cost" label="医疗缴费">
+                        </el-table-column>
+                        
+                        <el-table-column prop="condition" label="个人状态">
+                        </el-table-column>
+                        
+                    </el-table>
+                </template></el-main>
+        </el-container>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#DivId',
+            data: function () {
+                return {
+                    activeIndex: '1',
+                    activeIndex2: '1',
+                    Citizen: [{
+                        id: '',
+                        number: '',
+                        password: '',
+                        name: '',
+                        age: '',
+                        dender: '',
+                        idcard: '',
+                        cost: '',
+                        condition: ''
+                    }]
+
+                }
+            },
+            mounted: function () {
+                var _this = this;
+                axios({
+                	methods:'get',
+                	url:'http://localhost:8888/findInformations.action',
+                	params:{
+                	   number:window.localStorage.getItem('number'),
+                       password:window.localStorage.getItem('password')
+                	}                
+                })
+                    .then(function (response) {
+                        console.log(response.data.results);
+                        _this.Citizen = response.data.results;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            handleOpen(key, keyPath) {
+                console.log(key, keyPath);
+            },
+            handleClose(key, keyPath) {
+                console.log(key, keyPath);
+            },
+        })
+
+    </script>
+</body>
+
+</html>
