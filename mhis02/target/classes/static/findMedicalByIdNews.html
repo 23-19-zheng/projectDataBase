@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查询新闻</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .el-header,
+        .el-footer {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            background-color: #D3DCE6;
+            color: #333;
+            text-align: center;
+            line-height: 200px;
+        }
+
+        .el-main {
+            background-color: #E9EEF3;
+            color: #333;
+            text-align: center;
+            line-height: 160px;
+        }
+
+        body>.el-container {
+            margin-bottom: 40px;
+        }
+
+        .el-container:nth-child(5) .el-aside,
+        .el-container:nth-child(6) .el-aside {
+            line-height: 260px;
+        }
+
+        .el-container:nth-child(7) .el-aside {
+            line-height: 320px;
+        }
+
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            width: 200px;
+            min-height: 400px;
+        }
+
+        #inputId {
+            margin-left: 23%;
+            text-align: center;
+            width: 23%;
+            height: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="divId">
+        <el-container>
+            <el-header>
+                <input type="text" placeholder="按照序号查询新闻" id="inputId" v-model="id">
+                <el-button type="primary" icon="el-icon-search" @Click="findByIdMedicalNews()">搜索</el-button>
+            </el-header>
+
+            <el-main>
+                <template>
+                    <el-table :data="medicalNews" style="width: 100%">
+                        <el-table-column prop="id" label="序号">
+                        </el-table-column>
+
+                        <el-table-column prop="title" label="标题">
+                        </el-table-column>
+
+                        <el-table-column prop="author" label="发布者">
+                        </el-table-column>
+
+                        <el-table-column prop="content" label="内容">
+                        </el-table-column>
+
+                        <el-table-column prop="date" label="发布日期">
+                        </el-table-column>
+
+                    </el-table>
+                </template>
+            </el-main>
+
+        </el-container>
+    </div>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- 引入组件库 -->
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#divId',
+        data: function () {
+            return {
+                id:'',
+                medicalNews: [{
+                    id: '',
+                    title: '',
+                    author: '',
+                    content: '',
+                    date: ''
+                }]
+            }
+        },
+        methods: {
+            //按照新闻序号查询新闻
+            findByIdMedicalNews: function () {
+                var _this = this;
+                // 发送 Put 请求
+                axios({
+                    method: 'put',
+                    url: 'http://localhost:8888/fingByIdMedicalNews.action',
+                    params: {
+                        id:_this.id,
+                    }
+                })
+                    .then(function (response) {
+                    console.log(response);
+                    if (response.data.code == 200) {
+                        _this.medicalNews=response.data.results;
+
+                    } else {
+                        _this.$message({
+                            message: response.data.msg,
+                            type: 'error'
+                        });
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                })
+                }
+        }
+        })
+               
+</script>
+
+</html>
